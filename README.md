@@ -218,9 +218,9 @@ or picture of your physical board
 
 The url to your repository and to your deployed project
 
-[Client repository Link](https://github.com/screeeen/project-client)
+[Client repository Link](https://github.com/esthersinnick/mulli-frontend)
 
-[Server repository Link](https://github.com/screeeen/project-server)
+[Server repository Link](https://github.com/esthersinnick/mulli-backend)
 
 [Deployed App Link](http://heroku.com)
 

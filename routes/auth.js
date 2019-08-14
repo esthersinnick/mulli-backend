@@ -6,7 +6,7 @@ const createError = require('http-errors');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 
-const User = require('../models/user');
+const User = require('../models/User');
 
 const {
   isLoggedIn,
@@ -23,9 +23,9 @@ router.post(
   isNotLoggedIn(),
   validationLoggin(),
   async (req, res, next) => {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
     try {
-      const user = await User.findOne({ username });
+      const user = await User.findOne({ email });
       if (!user) {
         next(createError(404));
       } else if (bcrypt.compareSync(password, user.password)) {
@@ -45,17 +45,17 @@ router.post(
   isNotLoggedIn(),
   validationLoggin(),
   async (req, res, next) => {
-    const { username, password } = req.body;
-
+    const { email, password } = req.body;
     try {
-      const user = await User.findOne({ username }, 'username');
+      const user = await User.findOne({ email }, 'email');
       if (user) {
         return next(createError(422));
       } else {
         const salt = bcrypt.genSaltSync(10);
         const hashPass = bcrypt.hashSync(password, salt);
-        const newUser = await User.create({ username, password: hashPass });
+        const newUser = await User.create({ email, password: hashPass });
         req.session.currentUser = newUser;
+        console.log(req.session.currentUser);
         res.status(200).json(newUser);
       }
     } catch (error) {
@@ -69,10 +69,10 @@ router.post('/logout', isLoggedIn(), (req, res, next) => {
   return res.status(204).send();
 });
 
-router.get('/private', isLoggedIn(), (req, res, next) => {
-  res.status(200).json({
-    message: 'This is a private message'
-  });
-});
+// router.get('/private', isLoggedIn(), (req, res, next) => {
+//   res.status(200).json({
+//     message: 'This is a private message'
+//   });
+// });
 
 module.exports = router;

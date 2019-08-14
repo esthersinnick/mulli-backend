@@ -11,7 +11,10 @@ const MongoStore = require('connect-mongo')(session);
 const cors = require('cors');
 require('dotenv').config();
 
-const auth = require('./routes/auth');
+const authRouter = require('./routes/auth');
+const challengesRouter = require('./routes/challenges');
+const arts = require('./routes/arts');
+const dashboard = require('./routes/dashboard');
 
 mongoose
   .connect(process.env.MONGODB_URI, {
@@ -56,7 +59,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/auth', auth);
+app.use('/auth', authRouter);
+app.use('/challenges', challengesRouter);
+// app.use('/challenges/arts', arts);
+// app.use('/dashboard', dashboard);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

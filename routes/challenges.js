@@ -28,7 +28,14 @@ router.get('/:challengeId', async (req, res, next) => {
 // Create new challenge
 router.post('/add', async (req, res, next) => {
   try {
+    const userId =
+      (req.session && req.session.currentUser && req.session.currentUser._id) ||
+      null;
+
+    if (!userId) return res.sendStatus(401);
+
     const newChallenge = req.body;
+    newChallenge.creator = userId;
     const createdChallenge = await Challenge.create(newChallenge);
     res.status(200).json(createdChallenge);
   } catch (error) {
@@ -41,7 +48,11 @@ router.put('/:challengeId/edit', async (req, res, next) => {
   const { challengeId } = req.params;
   const challengeUpdated = req.body;
   try {
-    const updated = await Challenge.findByIdAndUpdate(challengeId, challengeUpdated, { new: true });
+    const updated = await Challenge.findByIdAndUpdate(
+      challengeId,
+      challengeUpdated,
+      { new: true }
+    );
     res.status(200).json(updated);
   } catch (error) {
     next(error);

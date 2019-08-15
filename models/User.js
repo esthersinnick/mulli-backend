@@ -17,8 +17,7 @@ const userSchema = new Schema({
   },
   instagram: String,
   website: String,
-  avatar: String,
-  challenges: []
+  avatar: String
 }, {
   timestamps: {
     createdAt: 'created_at',

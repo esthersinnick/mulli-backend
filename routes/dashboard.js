@@ -6,9 +6,9 @@ const User = require('../models/User');
 
 // get my user info
 router.get('/', async (req, res, next) => {
-  const UserId = req.session.currentUser._id;
+  const userId = req.session.currentUser._id;
   try {
-    const user = await User.findById(UserId);
+    const user = await User.findById(userId);
     res.status(200).json(user);
   } catch (error) {
     next(error);
@@ -26,9 +26,9 @@ router.get('/:userId', async (req, res, next) => {
   }
 });
 
-// get user info
-router.put('/:userId/update', async (req, res, next) => {
-  const { userId } = req.params;
+// edit user info
+router.put('/update', async (req, res, next) => {
+  const userId = req.session.currentUser._id;
   const userUpdated = req.body;
   try {
     const user = await User.findByIdAndUpdate(userId, userUpdated, { new: true });

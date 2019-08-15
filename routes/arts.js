@@ -1,0 +1,64 @@
+'use strict';
+
+const express = require('express');
+const router = express.Router();
+const Art = require('../models/Art');
+
+// get all arts
+router.get('/', async (req, res, next) => {
+  try {
+    const listOfArts = await Art.find();
+    res.status(200).json({ listOfArts });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// get all arts of a user
+
+router.get('/:userId', async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const listOfArts = await Art.find({ user: userId });
+    res.status(200).json({ listOfArts });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// get all arts of a challenge
+
+router.get('/challenge/:challengeId', async (req, res, next) => {
+  try {
+    const { challengeId } = req.params;
+    const listOfArts = await Art.find({ challenge: challengeId });
+    res.status(200).json({ listOfArts });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// add a new art
+router.post('/add', async (req, res, next) => {
+  try {
+    const newArt = req.body;
+    const CreatedArt = await Art.create(newArt);
+    res.status(200).json(CreatedArt);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// edit an art
+router.put('/:artId/update', async (req, res, next) => {
+  const { artId } = req.params;
+  const artUpdtated = req.body;
+  try {
+    const updated = await Art.findByIdAndUpdate(artId, artUpdtated, { new: true });
+    res.status(200).json(updated);
+  } catch (error) {
+    next(error);
+  }
+});
+
+module.exports = router;

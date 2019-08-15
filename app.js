@@ -13,8 +13,9 @@ require('dotenv').config();
 
 const authRouter = require('./routes/auth');
 const challengesRouter = require('./routes/challenges');
-const arts = require('./routes/arts');
-const dashboard = require('./routes/dashboard');
+const artsRouter = require('./routes/arts');
+const dashboardRouter = require('./routes/dashboard');
+// const profileRouter = require('./routes/profile');
 
 mongoose
   .connect(process.env.MONGODB_URI, {
@@ -61,8 +62,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/auth', authRouter);
 app.use('/challenges', challengesRouter);
-// app.use('/challenges/arts', arts);
-// app.use('/dashboard', dashboard);
+app.use('/arts', artsRouter);
+app.use('/dashboard', dashboardRouter);
+// app.use('/profile', profileRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

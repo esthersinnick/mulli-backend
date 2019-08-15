@@ -4,14 +4,11 @@ const express = require('express');
 const router = express.Router();
 const Challenge = require('../models/Challenge');
 
-// | POST        | /challenges/:challengesId/art/add             | {artId, artUpdated}          |                |              | add art                                          |
-// | GET         | /challenges/:challengeId/edit/                |                              |                |              | get info and fill form                                       |
-
 // get all challenges
 router.get('/', async (req, res, next) => {
   try {
     const listOfChallenges = await Challenge.find();
-    res.status(200).json({ listOfChallenges }); // json espera pasar un objeto, así que lo englobamos entre llaves, porque es un array. Si ya fuera un objeto, no sería necesario
+    res.status(200).json({ listOfChallenges });
   } catch (error) {
     next(error);
   }
@@ -22,7 +19,7 @@ router.get('/:challengeId', async (req, res, next) => {
   const { challengeId } = req.params;
   try {
     const challenge = await Challenge.findById(challengeId);
-    res.status(200).json(challenge); // json espera pasar un objeto, así que lo englobamos entre llaves, porque es un array. Si ya fuera un objeto, no sería necesario
+    res.status(200).json(challenge);
   } catch (error) {
     next(error);
   }

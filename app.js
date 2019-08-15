@@ -15,7 +15,6 @@ const authRouter = require('./routes/auth');
 const challengesRouter = require('./routes/challenges');
 const artsRouter = require('./routes/arts');
 const dashboardRouter = require('./routes/dashboard');
-// const profileRouter = require('./routes/profile');
 
 mongoose
   .connect(process.env.MONGODB_URI, {
@@ -64,7 +63,6 @@ app.use('/auth', authRouter);
 app.use('/challenges', challengesRouter);
 app.use('/arts', artsRouter);
 app.use('/dashboard', dashboardRouter);
-// app.use('/profile', profileRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

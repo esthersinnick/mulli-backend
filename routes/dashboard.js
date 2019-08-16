@@ -3,9 +3,13 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
+const {
+  isLoggedIn,
+  isSameUser
+} = require('../helpers/middlewares');
 
 // get my user info
-router.get('/', async (req, res, next) => {
+router.get('/', isLoggedIn(), async (req, res, next) => {
   const userId = req.session.currentUser._id;
   try {
     const user = await User.findById(userId);
@@ -16,7 +20,7 @@ router.get('/', async (req, res, next) => {
 });
 
 // update my user info
-router.get('/:userId', async (req, res, next) => {
+router.get('/:userId', isLoggedIn(), isSameUser(), async (req, res, next) => {
   const { userId } = req.params;
   try {
     const user = await User.findById(userId);
@@ -27,7 +31,7 @@ router.get('/:userId', async (req, res, next) => {
 });
 
 // edit user info
-router.put('/update', async (req, res, next) => {
+router.put('/update', isLoggedIn(), async (req, res, next) => {
   const userId = req.session.currentUser._id;
   const userUpdated = req.body;
   try {

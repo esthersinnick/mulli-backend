@@ -18,26 +18,22 @@ router.get('/me', isLoggedIn(), (req, res, next) => {
   res.json(req.session.currentUser);
 });
 
-router.post(
-  '/login',
-  isNotLoggedIn(),
-  validationLoggin(),
-  async (req, res, next) => {
-    const { email, password } = req.body;
-    try {
-      const user = await User.findOne({ email });
-      if (!user) {
-        next(createError(404));
-      } else if (bcrypt.compareSync(password, user.password)) {
-        req.session.currentUser = user;
-        return res.status(200).json(user);
-      } else {
-        next(createError(401));
-      }
-    } catch (error) {
-      next(error);
+router.post('/login', isNotLoggedIn(), validationLoggin(), async (req, res, next) => {
+  const { email, password } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      next(createError(404));
+    } else if (bcrypt.compareSync(password, user.password)) {
+      req.session.currentUser = user;
+      return res.status(200).json(user);
+    } else {
+      next(createError(401));
     }
+  } catch (error) {
+    next(error);
   }
+}
 );
 
 router.post(

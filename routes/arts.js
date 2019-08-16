@@ -3,9 +3,13 @@
 const express = require('express');
 const router = express.Router();
 const Art = require('../models/Art');
+const {
+  isLoggedIn,
+  isAdmin
+} = require('../helpers/middlewares');
 
 // get all arts
-router.get('/', async (req, res, next) => {
+router.get('/', isLoggedIn(), async (req, res, next) => {
   try {
     const listOfArts = await Art.find();
     res.status(200).json({ listOfArts });
@@ -16,7 +20,7 @@ router.get('/', async (req, res, next) => {
 
 // get all arts of a user
 
-router.get('/:userId', async (req, res, next) => {
+router.get('/:userId', isLoggedIn(), async (req, res, next) => {
   try {
     const { userId } = req.params;
     const listOfArts = await Art.find({ user: userId });
@@ -28,7 +32,7 @@ router.get('/:userId', async (req, res, next) => {
 
 // get all arts of a challenge
 
-router.get('/challenge/:challengeId', async (req, res, next) => {
+router.get('/challenge/:challengeId', isLoggedIn(), async (req, res, next) => {
   try {
     const { challengeId } = req.params;
     const listOfArts = await Art.find({ challenge: challengeId });
@@ -39,7 +43,7 @@ router.get('/challenge/:challengeId', async (req, res, next) => {
 });
 
 // add a new art
-router.post('/add', async (req, res, next) => {
+router.post('/add', isLoggedIn(), async (req, res, next) => {
   try {
     const newArt = req.body;
     const CreatedArt = await Art.create(newArt);
@@ -50,7 +54,7 @@ router.post('/add', async (req, res, next) => {
 });
 
 // edit an art
-router.put('/:artId/update', async (req, res, next) => {
+router.put('/:artId/update', isLoggedIn(), async (req, res, next) => {
   const { artId } = req.params;
   const artUpdtated = req.body;
   try {

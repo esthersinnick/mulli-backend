@@ -8,10 +8,22 @@ const challengeSchema = new Schema({
     type: String,
     required: true
   },
-  startDate: Date,
-  endDate: Date,
-  startVotingDate: Date,
-  endVotingDate: Date,
+  startDate: {
+    type: Date,
+    required: true
+  },
+  endDate: {
+    type: Date,
+    required: true
+  },
+  startVotingDate: {
+    type: Date,
+    required: true
+  },
+  endVotingDate: {
+    type: Date,
+    required: true
+  },
   description: String,
   creator: { type: ObjectId, ref: 'User' },
   illustrators: Number,

@@ -3,9 +3,15 @@
 const express = require('express');
 const router = express.Router();
 const Challenge = require('../models/Challenge');
+const {
+  isLoggedIn,
+  isNotLoggedIn,
+  validationLoggin,
+  isAdmin
+} = require('../helpers/middlewares');
 
 // get all challenges
-router.get('/', async (req, res, next) => {
+router.get('/', isLoggedIn(), async (req, res, next) => {
   try {
     const listOfChallenges = await Challenge.find();
     res.status(200).json({ listOfChallenges });
@@ -15,7 +21,7 @@ router.get('/', async (req, res, next) => {
 });
 
 // get one challenge
-router.get('/:challengeId', async (req, res, next) => {
+router.get('/:challengeId', isLoggedIn(), async (req, res, next) => {
   const { challengeId } = req.params;
   try {
     const challenge = await Challenge.findById(challengeId);
@@ -26,13 +32,9 @@ router.get('/:challengeId', async (req, res, next) => {
 });
 
 // Create new challenge
-router.post('/add', async (req, res, next) => {
+router.post('/add', isLoggedIn(), isAdmin(), async (req, res, next) => {
   try {
-    const userId =
-      (req.session && req.session.currentUser && req.session.currentUser._id) ||
-      null;
-
-    if (!userId) return res.sendStatus(401);
+    const userId = req.session.currentUser._id;
 
     const newChallenge = req.body;
     newChallenge.creator = userId;
@@ -44,7 +46,7 @@ router.post('/add', async (req, res, next) => {
 });
 
 // edit a challenge
-router.put('/:challengeId/edit', async (req, res, next) => {
+router.put('/:challengeId/edit', isLoggedIn(), isAdmin(), async (req, res, next) => {
   const { challengeId } = req.params;
   const challengeUpdated = req.body;
   try {
@@ -60,7 +62,7 @@ router.put('/:challengeId/edit', async (req, res, next) => {
 });
 
 // delete a challenge
-router.delete('/:challengeId/delete', async (req, res, next) => {
+router.delete('/:challengeId/delete', isLoggedIn(), isAdmin(), async (req, res, next) => {
   const { challengeId } = req.params;
   try {
     await Challenge.findByIdAndDelete(challengeId);

@@ -10,6 +10,14 @@ exports.isLoggedIn = () => (req, res, next) => {
   }
 };
 
+exports.isAdmin = () => (req, res, next) => {
+  if (req.session.currentUser && req.session.currentUser.isAdmin) {
+    next();
+  } else {
+    next(createError(401));
+  }
+};
+
 exports.isNotLoggedIn = () => (req, res, next) => {
   if (!req.session.currentUser) {
     next();

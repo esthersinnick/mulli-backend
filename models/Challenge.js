@@ -4,6 +4,13 @@ const ObjectId = Schema.Types.ObjectId;
 
 const challengeSchema = new Schema({
 
+  status: {
+    type: String,
+    enum: ['active', 'voting', 'closed'],
+    default: 'active',
+    required: true
+  },
+
   name: {
     type: String,
     required: true

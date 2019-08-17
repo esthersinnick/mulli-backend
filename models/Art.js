@@ -6,10 +6,9 @@ const artSchema = new Schema({
 
   user: { type: ObjectId, ref: 'User' },
   challenge: { type: ObjectId, ref: 'Challenge' },
-  image: String,
+  images: [{ type: String }],
   votes: [{ type: ObjectId, ref: 'User' }],
   rankingPosition: Number
-
 }, {
   timestamps: {
     createdAt: 'created_at',

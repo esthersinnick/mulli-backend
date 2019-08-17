@@ -42,8 +42,8 @@ User.create(seeds).then((users) => {
   "endVotingDate":"22 Aug 2019'",
   "description":"Design a dope skin that will blow the mind of your fellow designers. It is a white canvas, so go crazy!",
   "creator":"5d540b35d33eaa496d0da5d3",
-  "illustrators": 0,
-  "totalVotes": 0
+  "illustrators": 3,
+  "totalVotes": 9
 }
 
 */

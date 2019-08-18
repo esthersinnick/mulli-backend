@@ -15,7 +15,6 @@ const authRouter = require('./routes/auth');
 const challengesRouter = require('./routes/challenges');
 const artsRouter = require('./routes/arts');
 const dashboardRouter = require('./routes/dashboard');
-
 mongoose
   .connect(process.env.MONGODB_URI, {
     keepAlive: true,
@@ -62,7 +61,16 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/auth', authRouter);
 app.use('/challenges', challengesRouter);
 app.use('/arts', artsRouter);
-app.use('/dashboard', dashboardRouter);
+app.use('/dashboard', dashboardRouter); router.get('/challenge/:challengeId/user', isLoggedIn(), async (req, res, next) => {
+  try {
+    const userId = req.session.currentUser._id;
+    const { challengeId } = req.params;
+    const listOfArts = await Art.find({ $and: [{ challenge: challengeId }, { user: userId }] });
+    res.status(200).json({ listOfArts });
+  } catch (error) {
+    next(error);
+  }
+});
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

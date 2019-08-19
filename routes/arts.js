@@ -34,7 +34,7 @@ router.get('/:userId', isLoggedIn(), async (req, res, next) => {
 router.get('/challenge/:challengeId', isLoggedIn(), async (req, res, next) => {
   try {
     const { challengeId } = req.params;
-    const listOfArts = await Art.find({ challenge: challengeId });
+    const listOfArts = await Art.find({ challenge: challengeId }).populate('user');
     res.status(200).json({ listOfArts });
   } catch (error) {
     next(error);

@@ -5,6 +5,7 @@
   "scripts": {
     "start": "node ./bin/www",
     "start-dev": "nodemon ./bin/www",
+    "debug": "node --inspect-brk ./bin/www",
     "seeds": "nodemon ./bin/seeds.js"
   },
   "engines": {

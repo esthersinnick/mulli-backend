@@ -88,6 +88,36 @@ router.put('/:artId/update', isLoggedIn(), async (req, res, next) => {
   }
 });
 
+// add vote
+router.put('/:artId/addVote', isLoggedIn(), async (req, res, next) => {
+  try {
+    const { artId } = req.params;
+    const userId = req.session.currentUser._id;
+    const art = await Art.findById(artId);
+    const newVotes = [...art.votes];
+    console.log(newVotes, userId);
+    // const newVotesString = newVotes.map(id => {
+    //   return JSON.stringify(id);
+    // });
+    // console.log(newVotesString);
+
+    if (newVotes.includes(userId)) {
+      const indexOfId = newVotes.indexOf(userId);
+      newVotes.splice(indexOfId, 1);
+    } else {
+      newVotes.push(userId);
+    }
+
+    const artUpdtated = {
+      votes: newVotes
+    };
+    const updated = await Art.findByIdAndUpdate(artId, artUpdtated, { new: true });
+    res.status(200).json(updated);
+  } catch (error) {
+    next(error);
+  }
+});
+
 // edit an art of a challenge and user
 router.put('/:challengeId/user/update', isLoggedIn(), async (req, res, next) => {
   try {
@@ -99,6 +129,18 @@ router.put('/:challengeId/user/update', isLoggedIn(), async (req, res, next) => 
     const updated = await Art.findByIdAndUpdate(artId, updateArt, { new: true });
 
     res.status(200).json(updated);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// get all artsIds with my Id in votes array
+router.get('/challenge/:challengeId/artsVoted', isLoggedIn(), async (req, res, next) => {
+  try {
+    const userId = req.session.currentUser._id;
+    const { challengeId } = req.params;
+    const listOfArts = await Art.find({ $and: [{ challenge: challengeId }, { votes: { $in: userId } }] });
+    res.status(200).json({ listOfArts });
   } catch (error) {
     next(error);
   }

@@ -57,12 +57,14 @@ router.get('/challenge/:challengeId/user', isLoggedIn(), async (req, res, next) 
 router.post('/add', isLoggedIn(), async (req, res, next) => {
   try {
     const userId = req.session.currentUser._id;
+    // cambiar por params cuando tienes tiempo :)
     const { challengeId } = req.body;
     const challenge = await Challenge.findById(challengeId);
     const listOfArts = await Art.find({ $and: [{ challenge: challengeId }, { user: userId }] });
     if (challenge.status === 'active' && listOfArts.length === 0) {
       const { newArt } = req.body;
       newArt.user = userId;
+      newArt.challenge = challengeId;
       const CreatedArt = await Art.create(newArt);
       listOfArts.push(newArt);
       res.status(200).json(CreatedArt);
@@ -80,6 +82,22 @@ router.put('/:artId/update', isLoggedIn(), async (req, res, next) => {
     const { artId } = req.params;
     const artUpdtated = req.body;
     const updated = await Art.findByIdAndUpdate(artId, artUpdtated, { new: true });
+    res.status(200).json(updated);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// edit an art of a challenge and user
+router.put('/:challengeId/user/update', isLoggedIn(), async (req, res, next) => {
+  try {
+    const userId = req.session.currentUser._id;
+    const { challengeId } = req.params;
+    const updateArt = req.body;
+    const listOfArts = await Art.find({ $and: [{ challenge: challengeId }, { user: userId }] });
+    const artId = listOfArts[0]._id;
+    const updated = await Art.findByIdAndUpdate(artId, updateArt, { new: true });
+
     res.status(200).json(updated);
   } catch (error) {
     next(error);

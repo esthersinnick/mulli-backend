@@ -96,13 +96,17 @@ router.put('/:artId/addVote', isLoggedIn(), async (req, res, next) => {
     const art = await Art.findById(artId);
     const newVotes = [...art.votes];
     console.log(newVotes, userId);
-    // const newVotesString = newVotes.map(id => {
-    //   return JSON.stringify(id);
-    // });
-    // console.log(newVotesString);
+    let idIsIncludes = false;
+    let indexOfId = null;
 
-    if (newVotes.includes(userId)) {
-      const indexOfId = newVotes.indexOf(userId);
+    for (let i = 0; i < newVotes.length; i++) {
+      if (newVotes[i].equals(userId)) {
+        idIsIncludes = true;
+        indexOfId = i;
+      }
+    }
+
+    if (idIsIncludes) {
       newVotes.splice(indexOfId, 1);
     } else {
       newVotes.push(userId);

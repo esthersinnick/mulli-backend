@@ -73,6 +73,9 @@ router.put('/:challengeId/edit', isLoggedIn(), isAdmin(), async (req, res, next)
       challengeUpdated,
       { new: true }
     );
+    if (challengeUpdated.status !== 'active') {
+      await deleteArtsOnVoting(challengeId);
+    }
     res.status(200).json(updated);
   } catch (error) {
     next(error);
@@ -89,5 +92,9 @@ router.delete('/:challengeId/delete', isLoggedIn(), isAdmin(), async (req, res, 
     next(error);
   }
 });
+
+// eliminar arte (cuando el challenge pasa a voting o clsed y en el arte no hay imagen)
+
+const deleteArtsOnVoting = (challengeId) => Art.remove({ $and: [{ challenge: challengeId }, { images: { $size: 0 } }] });
 
 module.exports = router;

@@ -19,8 +19,9 @@ router.get('/', isLoggedIn(), async (req, res, next) => {
 // get all my arts
 router.get('/myArts', isLoggedIn(), async (req, res, next) => {
   try {
-    const { userId } = req.session.currentUser._id;
-    const listOfArts = await Art.find({ user: userId });// .populate('challenge');
+    const userId = req.session.currentUser._id;
+    console.log(userId);
+    const listOfArts = await Art.find({ user: userId }).populate('challenge');
     res.status(200).json({ listOfArts });
   } catch (error) {
     next(error);
@@ -49,7 +50,7 @@ router.get('/challenge/:challengeId', isLoggedIn(), async (req, res, next) => {
   }
 });
 
-// get one art of a user and challenge
+// get one art of my user and challenge
 router.get('/challenge/:challengeId/user', isLoggedIn(), async (req, res, next) => {
   try {
     const userId = req.session.currentUser._id;
@@ -157,7 +158,4 @@ router.get('/challenge/:challengeId/artsVoted', isLoggedIn(), async (req, res, n
     next(error);
   }
 });
-
-// eliminar arte (cuando el challenge pasa a voting y en el arte no hay imagen)
-
 module.exports = router;

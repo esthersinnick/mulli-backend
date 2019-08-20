@@ -18,6 +18,24 @@ router.get('/me', isLoggedIn(), (req, res, next) => {
   res.json(req.session.currentUser);
 });
 
+router.put('/me', isLoggedIn(), async (req, res, next) => {
+  try {
+    const userUpdated = req.body;
+    const userId = req.session.currentUser;
+    const updated = await User.findByIdAndUpdate(userId, userUpdated, { new: true });
+    // actualizar current User
+    updateCurrentUser(req, updated);
+    res.status(200).json(updated);
+  } catch (error) {
+    next(error);
+  }
+});
+
+function updateCurrentUser (req, user) {
+  req.session.currentUser = user;
+  delete req.session.currentUser.password;
+}
+
 router.post('/login', isNotLoggedIn(), validationLoggin(), async (req, res, next) => {
   const { email, password } = req.body;
   try {
@@ -25,7 +43,7 @@ router.post('/login', isNotLoggedIn(), validationLoggin(), async (req, res, next
     if (!user) {
       next(createError(404));
     } else if (bcrypt.compareSync(password, user.password)) {
-      req.session.currentUser = user;
+      updateCurrentUser(req, user);
       return res.status(200).json(user);
     } else {
       next(createError(401));

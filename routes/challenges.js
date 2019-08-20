@@ -3,19 +3,40 @@
 const express = require('express');
 const router = express.Router();
 const Challenge = require('../models/Challenge');
+const Art = require('../models/Art');
 const {
   isLoggedIn,
   isAdmin
 } = require('../helpers/middlewares');
 
-// get all challenges
-router.get('/', async (req, res, next) => {
-  try {
-    const listOfChallenges = await Challenge.find();
-    res.status(200).json({ listOfChallenges });
-  } catch (error) {
-    next(error);
-  }
+// // get all challenges
+// router.get('/', async (req, res, next) => {
+//   try {
+//     const listOfChallenges = await Challenge.find();
+//     res.status(200).json({ listOfChallenges });
+//   } catch (error) {
+//     next(error);
+//   }
+// });
+
+// get all challenges and number of participants
+router.get('/', (req, res, next) => {
+  Challenge.find()
+    .then((challenges) => {
+      Art.find()
+        .then((arts) => {
+          const newChallenge = [...challenges].map((challenge) => {
+            let count = 0;
+            arts.forEach(art => {
+              art.challenge.toString() === challenge._id.toString() && count++;
+            });
+            const newChallenge = challenge;
+            newChallenge['illustrators'] = count;
+            return newChallenge;
+          });
+          res.status(200).json(newChallenge);
+        });
+    });
 });
 
 // get one challenge

@@ -3,10 +3,7 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
-const {
-  isLoggedIn,
-  isSameUser
-} = require('../helpers/middlewares');
+const { isLoggedIn, isSameUser } = require('../helpers/middlewares');
 
 // get my user info
 router.get('/', isLoggedIn(), async (req, res, next) => {

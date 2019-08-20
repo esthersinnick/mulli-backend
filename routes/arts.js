@@ -4,15 +4,23 @@ const express = require('express');
 const router = express.Router();
 const Art = require('../models/Art');
 const Challenge = require('../models/Challenge');
-const {
-  isLoggedIn,
-  isAdmin
-} = require('../helpers/middlewares');
+const { isLoggedIn, isAdmin } = require('../helpers/middlewares');
 
 // get all arts
 router.get('/', isLoggedIn(), async (req, res, next) => {
   try {
     const listOfArts = await Art.find();
+    res.status(200).json({ listOfArts });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// get all my arts
+router.get('/myArts', isLoggedIn(), async (req, res, next) => {
+  try {
+    const { userId } = req.session.currentUser._id;
+    const listOfArts = await Art.find({ user: userId });// .populate('challenge');
     res.status(200).json({ listOfArts });
   } catch (error) {
     next(error);
@@ -60,16 +68,16 @@ router.post('/add', isLoggedIn(), async (req, res, next) => {
     // cambiar por params cuando tienes tiempo :)
     const { challengeId } = req.body;
     const challenge = await Challenge.findById(challengeId);
-    const listOfArts = await Art.find({ $and: [{ challenge: challengeId }, { user: userId }] });
-    if (challenge.status === 'active' && listOfArts.length === 0) {
+    const listOfMyArts = await Art.find({ $and: [{ challenge: challengeId }, { user: userId }] });
+    if (challenge.status === 'active' && listOfMyArts.length === 0) {
       const { newArt } = req.body;
       newArt.user = userId;
       newArt.challenge = challengeId;
       const CreatedArt = await Art.create(newArt);
-      listOfArts.push(newArt);
+      // listOfArts.push(newArt);
       res.status(200).json(CreatedArt);
     } else {
-      res.status(200).json(listOfArts[0]);
+      res.status(200).json(listOfMyArts[0]);
     }
   } catch (error) {
     next(error);

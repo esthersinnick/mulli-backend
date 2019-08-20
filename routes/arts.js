@@ -75,7 +75,7 @@ router.post('/add', isLoggedIn(), async (req, res, next) => {
       newArt.user = userId;
       newArt.challenge = challengeId;
       const CreatedArt = await Art.create(newArt);
-      // listOfArts.push(newArt);
+      listOfMyArts.push(newArt);
       res.status(200).json(CreatedArt);
     } else {
       res.status(200).json(listOfMyArts[0]);

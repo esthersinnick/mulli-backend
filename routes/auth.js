@@ -22,7 +22,9 @@ router.put('/me', isLoggedIn(), async (req, res, next) => {
   try {
     const userUpdated = req.body;
     const userId = req.session.currentUser;
-    const updated = await User.findByIdAndUpdate(userId, userUpdated, { new: true });
+    const updated = await User.findByIdAndUpdate(userId, userUpdated, {
+      new: true
+    });
     // actualizar current User
     updateCurrentUser(req, updated);
     res.status(200).json(updated);
@@ -36,22 +38,26 @@ function updateCurrentUser (req, user) {
   delete req.session.currentUser.password;
 }
 
-router.post('/login', isNotLoggedIn(), validationLoggin(), async (req, res, next) => {
-  const { email, password } = req.body;
-  try {
-    const user = await User.findOne({ email });
-    if (!user) {
-      next(createError(404));
-    } else if (bcrypt.compareSync(password, user.password)) {
-      updateCurrentUser(req, user);
-      return res.status(200).json(user);
-    } else {
-      next(createError(401));
+router.post(
+  '/login',
+  isNotLoggedIn(),
+  validationLoggin(),
+  async (req, res, next) => {
+    const { email, password } = req.body;
+    try {
+      const user = await User.findOne({ email });
+      if (!user) {
+        next(createError(404, 'User not found'));
+      } else if (bcrypt.compareSync(password, user.password)) {
+        updateCurrentUser(req, user);
+        return res.status(200).json(user);
+      } else {
+        next(createError(401, "User and password doesn't match"));
+      }
+    } catch (error) {
+      next(error);
     }
-  } catch (error) {
-    next(error);
   }
-}
 );
 
 router.post(
@@ -67,7 +73,12 @@ router.post(
       } else {
         const salt = bcrypt.genSaltSync(10);
         const hashPass = bcrypt.hashSync(password, salt);
-        const newUser = await User.create({ name, username, email, password: hashPass });
+        const newUser = await User.create({
+          name,
+          username,
+          email,
+          password: hashPass
+        });
         req.session.currentUser = newUser;
         console.log(req.session.currentUser);
         res.status(200).json(newUser);
@@ -82,11 +93,5 @@ router.post('/logout', isLoggedIn(), (req, res, next) => {
   req.session.destroy();
   return res.status(204).send();
 });
-
-// router.get('/private', isLoggedIn(), (req, res, next) => {
-//   res.status(200).json({
-//     message: 'This is a private message'
-//   });
-// });
 
 module.exports = router;

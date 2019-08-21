@@ -67,9 +67,12 @@ router.post(
   async (req, res, next) => {
     const { email, password, name, username } = req.body;
     try {
-      const user = await User.findOne({ email }, 'email');
+      const user = await User.findOne(
+        { $or: [{ email }, { username }] },
+        '_id'
+      );
       if (user) {
-        return next(createError(422));
+        return next(createError(422, 'Email or username in use'));
       } else {
         const salt = bcrypt.genSaltSync(10);
         const hashPass = bcrypt.hashSync(password, salt);
@@ -80,7 +83,6 @@ router.post(
           password: hashPass
         });
         req.session.currentUser = newUser;
-        console.log(req.session.currentUser);
         res.status(200).json(newUser);
       }
     } catch (error) {

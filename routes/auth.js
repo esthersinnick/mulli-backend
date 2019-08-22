@@ -52,7 +52,7 @@ router.post(
         updateCurrentUser(req, user);
         return res.status(200).json(user);
       } else {
-        next(createError(401, "User and password doesn't match"));
+        next(createError(401, 'Incorrect user and password'));
       }
     } catch (error) {
       next(error);

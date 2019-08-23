@@ -87,6 +87,7 @@ router.delete('/:challengeId/delete', isLoggedIn(), isAdmin(), async (req, res, 
   const { challengeId } = req.params;
   try {
     await Challenge.findByIdAndDelete(challengeId);
+    await Art.remove({ challenge: challengeId });
     res.status(200).json({ message: 'challenge deleted' });
   } catch (error) {
     next(error);
